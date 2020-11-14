@@ -1,91 +1,82 @@
-enum City {
-    GDL,
-    Monterrey
+type Restaurant{
+    _id:ID
+    name: String!
+    menus: [Menu]
 }
 
-union GlobalSearch = Restaurant | Provider | Employee
-
-type Employee {
-    _id:ID
-    id_employee: Int!
-    shortname: String!
-    id_position:Int!
-    id_supervisor: Int
-} 
-
-interface Company{
+interface Menu{
     _id:ID
     name: String!
-    employees: [Employee]
+    calories: Int
 }
 
-type Restaurant implements Company {
-    _id:ID
-    name: String!
-    employees: [Employee]
-    city: City
-} 
+enum DrinkType {
+    Hot,
+    Cold
+}
 
-type Provider implements Company {
+enum foodType {
+    Hot Breakfast,
+    Lunch,
+    Yogurt,
+    Snacks,
+    Bakery
+}
+
+type Drink implements Menu {
     _id:ID
     name: String!
-    employees: [Employee]
-    phone: String
+    food_type: foodType
+    calories: Int
+}
+
+type Food implements Menu {
+    _id:ID
+    name: String!
+    drink_type: DrinkType
+    calories: Int
 } 
 
 type Query {
-    "Devuelve todos los cursos"
-    getEmployees: [Employee]
-    "Busca por id_employee"
-    getEmployee(id: ID!): Employee
-    "Devuelve todos los restaurants"
-    getCompanies: [Company]
-    "Busca por id_company"
-    getCompany(id: ID!): Company
-    "Ejecuta una búsqueda Global"
+    "Get all restaurants"
+    getRestaurants: [Restaurant]
+    "Search a restaurant by ID"
+    getRestaurant(id: ID!): Restaurant
+    "Get all the menus"
+    getMenus: [Menu]
+    "Search a menu by ID"
+    getMenu(id: ID!): Menu
+    "Global search"
     searchItems(keyword: String!) : [GlobalSearch]
-    ## el caracter "!" se agrega cuando un campo es obligatorio
 }
-
-
-input EmployeeInput {
-    id_employee: Int!
-    shortname: String!
-    id_position:Int!
-    id_supervisor: Int
-}
-
-input EmployeeEditInput {
-    id_employee: Int
-    shortname: String
-    id_position:Int
-    id_supervisor: Int
-}
-
-input CompanyInput {
-    name: String!
-    city: City
-    phone: String
-}
-
-input CompanyEditInput {
-    name: String
-}
-
 
 type Mutation {
-    "Crear un empleado" 
-    createEmployee(input:EmployeeInput!): Employee
-    "Edita un empleado" 
-    editEmployee(id: ID!, input:EmployeeEditInput!): Employee
-    "Elimina un empleado" 
-    deleteEmployee(id: ID!): Boolean
-    "Crear un restaurant" 
-    createCompany(input:CompanyInput!): Company
-    "Editar un restaurant" 
-    editCompany(id: ID!,input:CompanyEditInput!): Company
-    "Elimina un restaurant" 
-    deleteCompany(id: ID!): Boolean
-    "Agrega Employee a Restaurante"
-    addEmployee(RestaurantID:ID!, EmployeeID: ID!): Restaurant
+    "Create a new restaurant" 
+    createRestaurant(input:RestaurantInput!): Restaurant
+    "Delete a restaurant" 
+    deleteRestaurant(id: ID!): Boolean
+    "Update a restaurant" 
+    editRestaurant(id: ID!, input:RestaurantInput!): Restaurant
+    "Create a new menu" 
+    createMenu(input:MenuInput!): Menu
+    "Update a menu" 
+    editMenu(id: ID!,input:MenuInput!): Menu
+    "Delete a menu" 
+    deleteMenu(id: ID!): Boolean
+    "add menu to the restaurant"
+    addMenu(MenuID:ID!, RestaurantID: ID!): Restaurant
 }
+
+input RestaurantInput {
+    name: String!
+}
+
+input MenuInput {
+    name: String!
+    calories: Int
+    drink_type: DrinkType
+    food_type: foodType
+}
+
+union GlobalSearch = Restaurant | Food | Drink
+
