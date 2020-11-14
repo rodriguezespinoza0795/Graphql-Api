@@ -1,0 +1,91 @@
+enum City {
+    GDL,
+    Monterrey
+}
+
+union GlobalSearch = Restaurant | Provider | Employee
+
+type Employee {
+    _id:ID
+    id_employee: Int!
+    shortname: String!
+    id_position:Int!
+    id_supervisor: Int
+} 
+
+interface Company{
+    _id:ID
+    name: String!
+    employees: [Employee]
+}
+
+type Restaurant implements Company {
+    _id:ID
+    name: String!
+    employees: [Employee]
+    city: City
+} 
+
+type Provider implements Company {
+    _id:ID
+    name: String!
+    employees: [Employee]
+    phone: String
+} 
+
+type Query {
+    "Devuelve todos los cursos"
+    getEmployees: [Employee]
+    "Busca por id_employee"
+    getEmployee(id: ID!): Employee
+    "Devuelve todos los restaurants"
+    getCompanies: [Company]
+    "Busca por id_company"
+    getCompany(id: ID!): Company
+    "Ejecuta una búsqueda Global"
+    searchItems(keyword: String!) : [GlobalSearch]
+    ## el caracter "!" se agrega cuando un campo es obligatorio
+}
+
+
+input EmployeeInput {
+    id_employee: Int!
+    shortname: String!
+    id_position:Int!
+    id_supervisor: Int
+}
+
+input EmployeeEditInput {
+    id_employee: Int
+    shortname: String
+    id_position:Int
+    id_supervisor: Int
+}
+
+input CompanyInput {
+    name: String!
+    city: City
+    phone: String
+}
+
+input CompanyEditInput {
+    name: String
+}
+
+
+type Mutation {
+    "Crear un empleado" 
+    createEmployee(input:EmployeeInput!): Employee
+    "Edita un empleado" 
+    editEmployee(id: ID!, input:EmployeeEditInput!): Employee
+    "Elimina un empleado" 
+    deleteEmployee(id: ID!): Boolean
+    "Crear un restaurant" 
+    createCompany(input:CompanyInput!): Company
+    "Editar un restaurant" 
+    editCompany(id: ID!,input:CompanyEditInput!): Company
+    "Elimina un restaurant" 
+    deleteCompany(id: ID!): Boolean
+    "Agrega Employee a Restaurante"
+    addEmployee(RestaurantID:ID!, EmployeeID: ID!): Restaurant
+}
